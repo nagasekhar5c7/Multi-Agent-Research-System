@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+
+# Environment / secrets
+.env
+*.env
+
+# SQLite runtime files
+*.db
+*.db-shm
+*.db-wal
+
+# macOS
+.DS_Store
+
+# Output reports (generated at runtime)
+output/*.docx
+
+# IDE
+.vscode/
+.idea/
