@@ -28,12 +28,12 @@ from datetime import datetime
 from pathlib import Path
 
 from docx import Document
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langgraph.types import interrupt
 
 from config.config import (
-    GROQ_API_KEY,
-    GROQ_MODEL,
+    OPENAI_API_KEY,
+    OPENAI_MODEL,
     MAX_ITERATIONS,
     MAX_RETRY_COUNT,
     MAX_SUB_AGENTS,
@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 # ── Module-level LLM instance (shared across all nodes) ───────────────────────
 # Initialised once to avoid re-creating the client on every node invocation.
-llm = ChatGroq(api_key=GROQ_API_KEY, model=GROQ_MODEL)
+llm = ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL)
 
 # ── Module-level session store ─────────────────────────────────────────────────
 session_store = SessionStore()
@@ -156,19 +156,25 @@ def plan_research_node(state: ResearchState) -> dict:
 def human_review_node(state: ResearchState) -> dict:
     """Human-in-the-Loop interrupt.
 
-    Pauses the graph and surfaces the task list to the caller via
-    interrupt(). The caller (main.py) resumes the graph by invoking
-    Command(resume={...}) within HUMAN_REVIEW_TIMEOUT_SECONDS.
-    If no response arrives in time, main.py auto-resumes with
-    {"action": "approve"} — this node just processes whatever response
-    it receives.
+    Only interrupts on iteration 1 (the initial plan). Subsequent
+    iterations are auto-approved so the research loop runs unattended.
 
-    Expected resume payload:
+    Expected resume payload (iteration 1 only):
         {"action": "approve"}
         {"action": "modify",  "feedback": "<instructions>"}
         {"action": "reject",  "feedback": "<instructions>"}
     """
-    logger.info("Node: human_review — pausing for human approval")
+    iteration: int = state.get("iteration_count", 1)
+
+    # Iterations 2+ — auto-approve and continue without interrupting the user
+    if iteration > 1:
+        logger.info(
+            "human_review: iteration %d — auto-approving (review only on iteration 1)",
+            iteration,
+        )
+        return {"human_approved": True, "human_feedback": ""}
+
+    logger.info("Node: human_review — pausing for human approval (iteration 1)")
 
     # Pause graph; return task list to the API caller for display
     response: dict = interrupt(
@@ -176,7 +182,7 @@ def human_review_node(state: ResearchState) -> dict:
             "message": "Please review the research task list and respond with "
                        "approve / modify / reject.",
             "tasks": state["tasks"],
-            "iteration": state.get("iteration_count", 1),
+            "iteration": iteration,
         }
     )
 

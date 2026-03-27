@@ -6,7 +6,7 @@ Replace the dummy API key values with real keys before running.
 
 Sections
 ────────
-1. Groq LLM
+1. OpenAI LLM
 2. Tavily Search
 3. SQLite (checkpointer + app-level session store)
 4. Sub-agent pool
@@ -17,17 +17,18 @@ Sections
 """
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. Groq LLM
+# 1. OpenAI LLM
 # ─────────────────────────────────────────────────────────────────────────────
 
-GROQ_API_KEY: str = "your_groq_api_key_here"
-"""Groq API key. Get yours at https://console.groq.com"""
+OPENAI_API_KEY: str = "your_openai_api_key_here"
+"""OpenAI API key. Get yours at https://platform.openai.com/api-keys"""
 
-GROQ_MODEL: str = "openai/gpt-oss-120b"
-"""Groq model ID.
-Recommended options (fast + capable):
-  • llama-3.3-70b-versatile   — best quality, default
-  • llama-3.1-8b-instant      — fastest, lower cost
+OPENAI_MODEL: str = "gpt-4o"
+"""OpenAI model ID.
+Recommended options:
+  • gpt-4o          — best quality, multimodal  (default)
+  • gpt-4o-mini     — faster, lower cost
+  • gpt-4-turbo     — large context window
 """
 
 # ─────────────────────────────────────────────────────────────────────────────

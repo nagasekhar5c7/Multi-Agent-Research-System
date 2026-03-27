@@ -1,6 +1,6 @@
 # Multi-Agent Research System
 
-A production-ready multi-agent research pipeline built with **LangGraph 0.2.x**, **Groq LLM**, and **Tavily** web search. Submit a research goal via REST API, review and approve the generated task plan, and receive a fully cited `.docx` research report.
+A production-ready multi-agent research pipeline built with **LangGraph 0.2.x**, **OpenAI GPT-4o**, and **Tavily** web search. Submit a research goal via REST API, review and approve the generated task plan, and receive a fully cited `.docx` research report.
 
 ---
 
@@ -44,7 +44,7 @@ User submits goal
 | Component        | Choice                                      |
 |-----------------|---------------------------------------------|
 | Framework        | LangGraph 0.2.70                           |
-| LLM              | Groq — `openai/gpt-oss-120b`               |
+| LLM              | OpenAI — `gpt-4o`                          |
 | Web search       | Tavily                                      |
 | Memory backend   | SQLite (app-level) + MemorySaver (LangGraph checkpoint) |
 | Sub-agent pool   | `ThreadPoolExecutor(max_workers=3)`         |
@@ -91,8 +91,8 @@ LangGraph_Live/
 ### 1. Add API keys to `config/config.py`
 
 ```python
-GROQ_API_KEY  = "your-groq-key"      # https://console.groq.com
-TAVILY_API_KEY = "your-tavily-key"   # https://tavily.com
+OPENAI_API_KEY  = "your-openai-key"   # https://platform.openai.com/api-keys
+TAVILY_API_KEY  = "your-tavily-key"   # https://tavily.com
 ```
 
 ### 2. Install dependencies
@@ -212,8 +212,8 @@ curl -s http://localhost:8000/health | python3 -m json.tool
 
 | Variable | Default | Description |
 |---|---|---|
-| `GROQ_API_KEY` | — | Groq API key (required) |
-| `GROQ_MODEL` | `openai/gpt-oss-120b` | Groq model ID |
+| `OPENAI_API_KEY` | — | OpenAI API key (required) |
+| `OPENAI_MODEL` | `gpt-4o` | OpenAI model ID |
 | `TAVILY_API_KEY` | — | Tavily API key (required) |
 | `TAVILY_SEARCH_DEPTH` | `basic` | `basic` or `advanced` |
 | `TAVILY_MAX_RESULTS` | `5` | Results per search query |
